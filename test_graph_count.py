@@ -19,7 +19,7 @@ class TestRepeatCounts(unittest.TestCase):
         simplex4[4, 3] = 1
         self.assertEqual(
             biedge_count_per_dimension(simplex4),
-            {1: 2, 2: 6, 3: 4, 4: 2}
+            {1: 2, 2: 6, 3: 6, 4: 2}
         )
 
     def test_2_biedge_in_simplex(self):
