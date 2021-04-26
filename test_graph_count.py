@@ -37,7 +37,7 @@ class TestNoRepeatCounts(unittest.TestCase):
         simplex3 = np.ones((4, 4), dtype=int) - np.diag(np.ones(4, dtype=int))
         simplex3[3, 2] = 1
         self.assertEqual(
-            biedge_count_per_dimension(simplex3),
+            biedge_count_per_dimension(simplex3, repeats=False),
             {3: 1}
         )
 
@@ -46,7 +46,7 @@ class TestNoRepeatCounts(unittest.TestCase):
         simplex3[3, 2] = 1
         simplex3[2, 1] = 1
         self.assertEqual(
-            biedge_count_per_dimension(simplex3),
+            biedge_count_per_dimension(simplex3, repeats=False),
             {1: 4, 2: 10, 3: 6}
         )
 
