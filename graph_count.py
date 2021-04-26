@@ -1,4 +1,4 @@
-from pyflagser_count import flagser_count
+from pyflagsercount import flagser_count
 from typing import Union, List
 import numpy as np
 import scipy.sparse as sp
