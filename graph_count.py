@@ -44,6 +44,8 @@ def biedge_count_per_dimension(conn_matrix: Union[np.ndarray, sp.coo_matrix], re
             file.unlink()
 
     else:
+        dimension_record_matrix = np.zeros(conn_matrix.shape)
+
         simplices = []
         for file in Path("").glob(temporary_file_name + "*.binary"):
             simplices.extend(binary2simplex(file))
@@ -53,9 +55,8 @@ def biedge_count_per_dimension(conn_matrix: Union[np.ndarray, sp.coo_matrix], re
             biedge_coordinates = biedges_in_simplex_coordinates(conn_matrix, simplex)
             for elem in zip(biedge_coordinates):
                 result_dict[dimension] = result_dict.setdefault(dimension, 0) +\
-                                         conn_matrix[elem] * conn_matrix.T[elem]
-                conn_matrix[elem] = False
-                conn_matrix[list(reversed(elem))] = False
+                                         dimension_record_matrix[sorted(elem)] < dimension
+                dimension_record_matrix[sorted(elem)] = dimension
     return result_dict
 
 
