@@ -15,7 +15,7 @@ class TestRepeatCounts(unittest.TestCase):
             {1: 2, 2: 4, 3: 2}
         )
 
-        simplex4 = np.triu(np.ones((4, 4), dtype=int)) - np.diag(np.ones(4, dtype=int))
+        simplex4 = np.triu(np.ones((5, 5), dtype=int)) - np.diag(np.ones(5, dtype=int))
         simplex4[4, 3] = 1
         self.assertEqual(
             biedge_count_per_dimension(simplex4),
