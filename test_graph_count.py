@@ -79,9 +79,9 @@ class TestDoesNotOverride(unittest.TestCase):
 
 class TestDoesNotLeaveFiles(unittest.TestCase):
     def test_no_added_files(self):
-        initial_file_list = Path("").glob("**")
+        initial_file_list = list(Path("").glob("**"))
         biedge_count_per_dimension(np.ones((4, 4)))
-        final_file_list = Path("").glob("**")
+        final_file_list = list(Path("").glob("**"))
         self.assertEqual(initial_file_list, final_file_list)
 
 
