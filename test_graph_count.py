@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from pathlib import Path
-from graph_count import biedge_count_per_dimension
+from graph_count import biedge_counts_per_dimension
 
 from graph_count import temporary_file_name
 
@@ -11,14 +11,14 @@ class TestRepeatCounts(unittest.TestCase):
         simplex3 = np.triu(np.ones((4, 4), dtype=int)) - np.diag(np.ones(4, dtype=int))
         simplex3[3, 2] = 1
         self.assertEqual(
-            biedge_count_per_dimension(simplex3),
+            biedge_counts_per_dimension(simplex3),
             {1: 2, 2: 4, 3: 2}
         )
 
         simplex4 = np.triu(np.ones((5, 5), dtype=int)) - np.diag(np.ones(5, dtype=int))
         simplex4[4, 3] = 1
         self.assertEqual(
-            biedge_count_per_dimension(simplex4),
+            biedge_counts_per_dimension(simplex4),
             {1: 2, 2: 6, 3: 6, 4: 2}
         )
 
@@ -27,7 +27,7 @@ class TestRepeatCounts(unittest.TestCase):
         simplex3[3, 2] = 1
         simplex3[2, 1] = 1
         self.assertEqual(
-            biedge_count_per_dimension(simplex3),
+            biedge_counts_per_dimension(simplex3),
             {1: 4, 2: 10, 3: 6}
         )
 
@@ -37,7 +37,7 @@ class TestNoRepeatCounts(unittest.TestCase):
         simplex3 = np.triu(np.ones((4, 4), dtype=int)) - np.diag(np.ones(4, dtype=int))
         simplex3[3, 2] = 1
         self.assertEqual(
-            biedge_count_per_dimension(simplex3, repeats=False),
+            biedge_counts_per_dimension(simplex3, repeats=False),
             {3: 1}
         )
 
@@ -46,7 +46,7 @@ class TestNoRepeatCounts(unittest.TestCase):
         simplex3[3, 2] = 1
         simplex3[2, 1] = 1
         self.assertEqual(
-            biedge_count_per_dimension(simplex3, repeats=False),
+            biedge_counts_per_dimension(simplex3, repeats=False),
             {3: 2}
         )
 
@@ -59,8 +59,8 @@ class TestBooleanMatrix(unittest.TestCase):
             (np.logical_not(np.diag(np.ones(4, dtype=bool))))
         )
         self.assertEqual(
-            biedge_count_per_dimension(simplex3int),
-            biedge_count_per_dimension(simplex3bool)
+            biedge_counts_per_dimension(simplex3int),
+            biedge_counts_per_dimension(simplex3bool)
         )
 
 
@@ -74,13 +74,13 @@ class TestDoesNotOverride(unittest.TestCase):
         Path(temporary_file_name + "1.binary").unlink()
 
     def test_no_override(self):
-        self.assertRaises(FileExistsError, biedge_count_per_dimension, np.ones((4, 4)))
+        self.assertRaises(FileExistsError, biedge_counts_per_dimension, np.ones((4, 4)))
 
 
 class TestDoesNotLeaveFiles(unittest.TestCase):
     def test_no_added_files(self):
         initial_file_list = list(Path("").glob("**"))
-        biedge_count_per_dimension(np.ones((4, 4)))
+        biedge_counts_per_dimension(np.ones((4, 4)))
         final_file_list = list(Path("").glob("**"))
         self.assertEqual(initial_file_list, final_file_list)
 
