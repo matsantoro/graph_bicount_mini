@@ -56,6 +56,7 @@ def biedge_count_per_dimension(conn_matrix: Union[np.ndarray, sp.coo_matrix], re
                                          conn_matrix[elem] * conn_matrix.T[elem]
                 conn_matrix[elem] = False
                 conn_matrix[list(reversed(elem))] = False
+    return result_dict
 
 
 def biedge_in_simplex(conn_matrix: Union[np.ndarray, sp.csr_matrix], simplex: List[int]):
