@@ -6,24 +6,6 @@ from typing import List, Dict
 default_temporary_name = "temp"
 
 
-def binary2simplex(address):
-    """From Jason's flagser-count."""
-    X = np.fromfile(address, dtype='uint64')                         #Load binary file
-    S=[]                                                             #Initialise empty list for simplices
-
-    i=0
-    while i < len(X):
-        b = format(X[i], '064b')                                     #Load the 64bit integer as a binary string
-        if b[0] == '0':                                              #If the first bit is 0 this is the start of a new simplex
-            S.append([])
-        t=[int(b[-21:],2), int(b[-42:-21],2), int(b[-63:-42],2)]     #Compute the 21bit ints stored in this 64bit int
-        for j in t:
-            if j != 2097151:                                         #If an int is 2^21 this means we have reached the end of the simplex, so don't add it
-                S[-1].append(j)
-        i+=1
-    return S
-
-
 def biedge_counts_per_dimension(conn_matrix: np.ndarray, repeats: bool = True,
                                 temp_fname: str = default_temporary_name) -> Dict[int, int]:
     """
@@ -101,3 +83,21 @@ def biedges_coordinates_in_simplex(conn_matrix: np.ndarray, simplex: List[int]):
     biedges_rows_in_matrix = [simplex[i] for i in biedges_indices_in_simplex[1]]
     biedges_cols_in_matrix = [simplex[i] for i in biedges_indices_in_simplex[0]]
     return biedges_rows_in_matrix, biedges_cols_in_matrix
+
+
+def binary2simplex(address):
+    """From Jason's flagser-count."""
+    X = np.fromfile(address, dtype='uint64')                         #Load binary file
+    S=[]                                                             #Initialise empty list for simplices
+
+    i=0
+    while i < len(X):
+        b = format(X[i], '064b')                                     #Load the 64bit integer as a binary string
+        if b[0] == '0':                                              #If the first bit is 0 this is the start of a new simplex
+            S.append([])
+        t=[int(b[-21:],2), int(b[-42:-21],2), int(b[-63:-42],2)]     #Compute the 21bit ints stored in this 64bit int
+        for j in t:
+            if j != 2097151:                                         #If an int is 2^21 this means we have reached the end of the simplex, so don't add it
+                S[-1].append(j)
+        i+=1
+    return S
