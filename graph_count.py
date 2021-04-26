@@ -1,5 +1,5 @@
 from pyflagsercount import flagser_count
-from typing import Union, List
+from typing import List
 import numpy as np
 import scipy.sparse as sp
 from pathlib import Path
@@ -25,47 +25,48 @@ def binary2simplex(address):
     return S
 
 
-def biedge_count_per_dimension(conn_matrix: Union[np.ndarray, sp.coo_matrix], repeats: bool = True):
+def biedge_count_per_dimension(conn_matrix: np.ndarray, repeats: bool = True):
     result_dict = {}
 
     for file in Path("").glob(temporary_file_name + "*.binary"):
         if file.exists():
-            raise FileExistsError("File " + str(file.absolute()) + " already exists. Cannot overwrite it.")
+            raise FileExistsError("File " + str(file.absolute()) + " already exists. Aborting.")
 
     flagser_count(conn_matrix, binary=temporary_file_name)
+    try:
+        if repeats:
+            for file in Path("").glob(temporary_file_name + "*.binary"):
+                simplices = binary2simplex(file)
+                for simplex in simplices:
+                    dimension = len(simplex) - 1
+                    result_dict[dimension] = result_dict.setdefault(dimension, 0) +\
+                                             biedge_in_simplex(conn_matrix, simplex)
+        else:
+            dimension_record_matrix = np.zeros(conn_matrix.shape, dtype = np.int)
 
-    if repeats:
-        for file in Path("").glob(temporary_file_name + "*.binary"):
-            simplices = binary2simplex(file)
+            simplices = []
+            for file in Path("").glob(temporary_file_name + "*.binary"):
+                simplices.extend(binary2simplex(file))
             for simplex in simplices:
                 dimension = len(simplex) - 1
-                result_dict[dimension] = result_dict.setdefault(dimension, 0) +\
-                                         biedge_in_simplex(conn_matrix, simplex)
-            file.unlink()
-    else:
-        dimension_record_matrix = np.zeros(conn_matrix.shape, dtype = np.int)
-
-        simplices = []
+                biedge_coordinates = biedges_in_simplex_coordinates(conn_matrix, simplex)
+                for biedge in zip(*biedge_coordinates):
+                    sorted_biedge = tuple(sorted(biedge))
+                    if dimension_record_matrix[sorted_biedge] < dimension:
+                        dimension_record_matrix[sorted_biedge] = dimension
+            dimensions, counts = np.unique(dimension_record_matrix, return_counts=True)
+            result_dict = dict(zip(dimensions, counts))
+        return result_dict
+    finally:
         for file in Path("").glob(temporary_file_name + "*.binary"):
-            simplices.extend(binary2simplex(file))
             file.unlink()
-        for simplex in simplices:
-            dimension = len(simplex) - 1
-            biedge_coordinates = biedges_in_simplex_coordinates(conn_matrix, simplex)
-            for biedge in zip(*biedge_coordinates):
-                sorted_biedge = tuple(sorted(biedge))
-                if dimension_record_matrix[sorted_biedge] < dimension:
-                    dimension_record_matrix[sorted_biedge] = dimension
-        dimensions, counts = np.unique(dimension_record_matrix, return_counts=True)
-        result_dict = dict(zip(dimensions, counts))
-    return result_dict
 
 
-def biedge_in_simplex(conn_matrix: Union[np.ndarray, sp.csr_matrix], simplex: List[int]):
+def biedge_in_simplex(conn_matrix: np.ndarray, simplex: List[int]):
     return np.sum(np.triu(conn_matrix[simplex].T[simplex]))
 
 
-def biedges_in_simplex_coordinates(conn_matrix: Union[np.ndarray, sp.csr_matrix], simplex: List[int]):
+def biedges_in_simplex_coordinates(conn_matrix: np.ndarray, simplex: List[int]):
     biedges_indices_in_simplex = np.nonzero(np.triu(conn_matrix[simplex].T[simplex]))
     biedges_rows_in_matrix = [simplex[i] for i in biedges_indices_in_simplex[1]]
     biedges_cols_in_matrix = [simplex[i] for i in biedges_indices_in_simplex[0]]
