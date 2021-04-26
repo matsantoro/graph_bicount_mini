@@ -66,6 +66,6 @@ def biedge_in_simplex(conn_matrix: Union[np.ndarray, sp.csr_matrix], simplex: Li
 
 def biedges_in_simplex_coordinates(conn_matrix: Union[np.ndarray, sp.csr_matrix], simplex: List[int]):
     biedges_indices_in_simplex = np.nonzero(np.tril(conn_matrix[simplex].T[simplex]))
-    biedges_rows_in_matrix = simplex[biedges_indices_in_simplex[1]]
-    biedges_cols_in_matrix = simplex[biedges_indices_in_simplex[0]]
+    biedges_rows_in_matrix = [simplex[i] for i in biedges_indices_in_simplex[1]]
+    biedges_cols_in_matrix = [simplex[i] for i in biedges_indices_in_simplex[0]]
     return biedges_rows_in_matrix, biedges_cols_in_matrix
