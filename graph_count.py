@@ -43,7 +43,7 @@ def biedge_count_per_dimension(conn_matrix: Union[np.ndarray, sp.coo_matrix], re
                                          biedge_in_simplex(conn_matrix, simplex)
             file.unlink()
     else:
-        dimension_record_matrix = np.zeros(conn_matrix.shape)
+        dimension_record_matrix = np.zeros(conn_matrix.shape, dtype = np.int)
 
         simplices = []
         for file in Path("").glob(temporary_file_name + "*.binary"):
