@@ -42,7 +42,6 @@ def biedge_count_per_dimension(conn_matrix: Union[np.ndarray, sp.coo_matrix], re
                 result_dict[dimension] = result_dict.setdefault(dimension, 0) +\
                                          biedge_in_simplex(conn_matrix, simplex)
             file.unlink()
-
     else:
         dimension_record_matrix = np.zeros(conn_matrix.shape)
 
@@ -53,10 +52,12 @@ def biedge_count_per_dimension(conn_matrix: Union[np.ndarray, sp.coo_matrix], re
         for simplex in simplices:
             dimension = len(simplex) - 1
             biedge_coordinates = biedges_in_simplex_coordinates(conn_matrix, simplex)
-            for elem in zip(biedge_coordinates):
-                result_dict[dimension] = result_dict.setdefault(dimension, 0) +\
-                                         dimension_record_matrix[sorted(elem)] < dimension
-                dimension_record_matrix[sorted(elem)] = dimension
+            for biedge in zip(*biedge_coordinates):
+                sorted_biedge = tuple(sorted(biedge))
+                if dimension_record_matrix[sorted_biedge] < dimension:
+                    dimension_record_matrix[sorted_biedge] = dimension
+        dimensions, counts = np.unique(dimension_record_matrix, return_counts=True)
+        result_dict = dict(zip(dimensions, counts))
     return result_dict
 
 
@@ -65,7 +66,7 @@ def biedge_in_simplex(conn_matrix: Union[np.ndarray, sp.csr_matrix], simplex: Li
 
 
 def biedges_in_simplex_coordinates(conn_matrix: Union[np.ndarray, sp.csr_matrix], simplex: List[int]):
-    biedges_indices_in_simplex = np.nonzero(np.tril(conn_matrix[simplex].T[simplex]))
+    biedges_indices_in_simplex = np.nonzero(np.triu(conn_matrix[simplex].T[simplex]))
     biedges_rows_in_matrix = [simplex[i] for i in biedges_indices_in_simplex[1]]
     biedges_cols_in_matrix = [simplex[i] for i in biedges_indices_in_simplex[0]]
     return biedges_rows_in_matrix, biedges_cols_in_matrix
