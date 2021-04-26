@@ -77,5 +77,13 @@ class TestDoesNotOverride(unittest.TestCase):
         self.assertRaises(FileExistsError, biedge_count_per_dimension, np.ones((4, 4)))
 
 
+class TestDoesNotLeaveFiles(unittest.TestCase):
+    def test_no_added_files(self):
+        initial_file_list = Path("").glob("**")
+        biedge_count_per_dimension(np.ones((4, 4)))
+        final_file_list = Path("").glob("**")
+        self.assertEqual(initial_file_list, final_file_list)
+
+
 if __name__ == '__main__':
     unittest.main()
