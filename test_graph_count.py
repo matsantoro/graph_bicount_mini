@@ -1,9 +1,8 @@
-import unittest
 import numpy as np
 from pathlib import Path
-from graph_count import biedge_counts_per_dimension
+import unittest
 
-from graph_count import temporary_file_name
+from graph_count import biedge_counts_per_dimension, default_temporary_name
 
 
 class TestRepeatCounts(unittest.TestCase):
@@ -67,11 +66,11 @@ class TestBooleanMatrix(unittest.TestCase):
 class TestDoesNotOverride(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        Path(temporary_file_name + "1.binary").touch()
+        Path(default_temporary_name + "1.binary").touch()
 
     @classmethod
     def tearDownClass(cls):
-        Path(temporary_file_name + "1.binary").unlink()
+        Path(default_temporary_name + "1.binary").unlink()
 
     def test_no_override(self):
         self.assertRaises(FileExistsError, biedge_counts_per_dimension, np.ones((4, 4)))
