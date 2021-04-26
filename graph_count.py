@@ -11,8 +11,8 @@ def biedge_counts_per_dimension(conn_matrix: np.ndarray, repeats: bool = True,
     """
     Count of bidirectional edges per dimension of a given graph represented by a connectivity matrix.
     :param conn_matrix: (np.ndarray) connectivity matrix of the graph.
-    :param repeats: (bool) whether to count bidirectional edges as they appear or to divide them based
-        on the maximal dimension of the simplex they belong to.
+    :param repeats: (bool) whether to count bidirectional edges as they appear in simplices (with repeats)
+        or to group the existing edges based on the maximal dimension of the simplex they belong to.
     :param temp_fname: (str) temporary filename stem (i.e. no extension) to use. temp files will be
         "temp_fname%d.binary", where %d% is the thread number from flagser-count.
     :return result_dictionary: (Dict[int,int]) a dictionary containing the {dimension: count} pairs.
