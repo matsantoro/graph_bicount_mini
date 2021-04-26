@@ -54,7 +54,10 @@ class TestNoRepeatCounts(unittest.TestCase):
 class TestBooleanMatrix(unittest.TestCase):
     def test_bool_int(self):
         simplex3int = np.ones((4, 4), dtype=int) - np.diag(np.ones(4, dtype=int))
-        simplex3bool = np.ones((4, 4), dtype=bool).multiply(np.logical_not(np.diag(np.ones(4, dtype=bool))))
+        simplex3bool = np.multiply(
+            np.ones((4, 4), dtype=bool),
+            (np.logical_not(np.diag(np.ones(4, dtype=bool))))
+        )
         self.assertEqual(
             biedge_count_per_dimension(simplex3int),
             biedge_count_per_dimension(simplex3bool)
