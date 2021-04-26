@@ -55,6 +55,7 @@ def biedge_count_per_dimension(conn_matrix: np.ndarray, repeats: bool = True):
                         dimension_record_matrix[sorted_biedge] = dimension
             dimensions, counts = np.unique(dimension_record_matrix, return_counts=True)
             result_dict = dict(zip(dimensions, counts))
+            result_dict.pop(0, None)
         return result_dict
     finally:
         for file in Path("").glob(temporary_file_name + "*.binary"):
