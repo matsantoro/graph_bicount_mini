@@ -1,7 +1,6 @@
 from pyflagsercount import flagser_count
 from typing import List
 import numpy as np
-import scipy.sparse as sp
 from pathlib import Path
 
 temporary_file_name = "temp"
@@ -32,7 +31,7 @@ def biedge_count_per_dimension(conn_matrix: np.ndarray, repeats: bool = True):
         if file.exists():
             raise FileExistsError("File " + str(file.absolute()) + " already exists. Aborting.")
 
-    flagser_count(conn_matrix, binary=temporary_file_name)
+    flagser_count(conn_matrix, binary=temporary_file_name, min_dim_print=1)
     try:
         if repeats:
             for file in Path("").glob(temporary_file_name + "*.binary"):
@@ -42,7 +41,7 @@ def biedge_count_per_dimension(conn_matrix: np.ndarray, repeats: bool = True):
                     result_dict[dimension] = result_dict.setdefault(dimension, 0) +\
                                              biedge_in_simplex(conn_matrix, simplex)
         else:
-            dimension_record_matrix = np.zeros(conn_matrix.shape, dtype = np.int)
+            dimension_record_matrix = np.zeros(conn_matrix.shape, dtype=np.int)
 
             simplices = []
             for file in Path("").glob(temporary_file_name + "*.binary"):
